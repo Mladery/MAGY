@@ -13,9 +13,25 @@
 
 - 每个 Discord 账号有**专属 API Key**（`sk-...`），首次访问自动生成，后续登录保持不变。
 - 点击眼睛图标显示 / 隐藏 Key，点击「复制」复制完整 Key。
-- API 地址为 `https://aclimladery.dpdns.org`。
+- **API 地址（Base URL）：`https://aclimladery.dpdns.org/v1`**
 
 > 如果你的账号尚未转正，会被要求先输入注册码。注册码获取方式见 [注册码文档](/wiki/regcodes.md)。
+
+## 2.1 两个常用端点
+
+Base URL 填 `https://aclimladery.dpdns.org/v1` 之后：
+
+| 用途 | 端点 | 说明 |
+| --- | --- | --- |
+| 文本 / 对话 | `POST /v1/chat/completions` | **酒馆（SillyTavern）和通用 AI 客户端只要填了 Base URL 就会自动补上** `/chat/completions`，不用手写 |
+| 生图 | `POST /v1/images/generations` | 图片生成接口，参数按 OpenAI 兼容格式 |
+
+```text
+Base URL: https://aclimladery.dpdns.org/v1
+对话端点: /chat/completions      （客户端自动补全）
+生图端点: /images/generations
+API Key:  sk-你的Key
+```
 
 ## 3. 在常见 CLI 工具中接入
 
@@ -39,6 +55,8 @@ codex
 
 ```text
 Base URL: https://aclimladery.dpdns.org/v1
+对话端点: /chat/completions      （客户端自动补全）
+生图端点: /images/generations
 API Key:  sk-你的Key
 ```
 

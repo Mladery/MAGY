@@ -15,8 +15,8 @@
 | 🎫 注册码 | 获取渠道、使用位置、常见错误 | [regcodes.md](/wiki/regcodes.md) |
 | 🧹 账号保留与清退 | 每周五 23:00 清退从未调用过模型的账号 | [retention.md](/wiki/retention.md) |
 | ⚠️ 报错速查 | 400 / 403 / 502 / missing project_id 等 | [errors.md](/wiki/errors.md) |
-| 📢 更新日志 | 近期功能与规则调整 | [updates.md](/wiki/updates.md) |
 |  风控与安全 | 限流、防贩子、封禁规则 | [risk-control.md](/wiki/risk-control.md) |
+| 📢 更新日志 | 近期功能与规则调整 | [updates.md](/wiki/updates.md) |
 
 ## 高频问题速答
 
