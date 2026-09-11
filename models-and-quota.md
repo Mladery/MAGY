@@ -36,4 +36,10 @@
 - `Requests ending with a model turn are not supported.` → 对话结尾是 assistant，发 continue。
 - `gemini-3.1-flash-image` 调用报错 → URL 后缀改为 `/v1/images/generations`。
 
+## 提示词缓存（为什么续写更省）
+
+- 上游按「**账号 + 模型 + 上下文前缀**」缓存已经处理过的内容，命中部分更快、计费更省。
+- 本站已开启**会话粘性**：同一段对话固定由同一个凭证服务，缓存才有机会命中（该配置此前写错位置、实际未生效，命中率偏低）。
+- 因此：**在同一段对话里继续**通常比每次新建会话更快也更省；每次都粘贴不同的超长内容则基本无法命中缓存。
+
 更多见 [报错速查](/wiki/errors.md)。
