@@ -9,7 +9,7 @@
 | 主题 | 说明 | 文档 |
 | --- | --- | --- |
 | 🚀 快速开始 | 登录、领取 API Key、CLI 接入 | [getting-started.md](/wiki/getting-started.md) |
-| 🔑 凭证 | AGY 凭证上传、OAuth 授权、GCLI 区别 | [credentials.md](/wiki/credentials.md) |
+| 🔑 凭证 | AGY / Freebuff 两种 OAuth 授权、凭证上传、GCLI 区别 | [credentials.md](/wiki/credentials.md) |
 | 🧠 模型与配额 | 可用模型、配额规则、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
 | 🎲 恶魔轮盘赌 | 玩法、道具、0 配额局、注册码掉落 | [roulette.md](/wiki/roulette.md) |
 | 🎫 注册码 | 获取渠道、使用位置、常见错误 | [regcodes.md](/wiki/regcodes.md) |
@@ -36,7 +36,7 @@
 
 1. **不要把 GCLI 凭证上传给 AGY 公益站，AGY 公益站不收！**
 2. GG 公益站里的"下载凭证"全部都是 GCLI。
-3. 请优先使用 OAuth 授权提交凭证。
+3. 请优先使用 OAuth 授权：**要 AGY 凭证就用「🔑 AGY OAuth 授权」卡片，要 Freebuff 凭证就用「🆓 Freebuff OAuth 授权」卡片**。两张卡相邻、各自独立：AGY 卡的链接是 `accounts.google.com`、需要粘贴回调；Freebuff 卡的链接是 `freebuff.com`、**不需要粘贴任何内容**。
 
 详见 [凭证文档](/wiki/credentials.md)。
 

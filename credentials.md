@@ -11,16 +11,33 @@ AGY 公益站通过凭证池轮询 Google Antigravity 账号额度。凭证来�
 
 ## 推荐方式：OAuth 授权
 
-在门户「AGY 凭证」区块点击「发起授权」：
+门户页上有**两张相邻的授权卡片**，各自独立：上面是「🔑 AGY OAuth 授权」，紧挨着下面是「🆓 Freebuff OAuth 授权」。**想拿哪种凭证就点哪张卡**，两张卡的链接与按钮不会互相串用。
 
-1. 按照页面提示在新标签页完成 Google OAuth。
-2. 把回调产生的 URL 粘贴回来提交。
-3. 网关会自动认领并转换凭证、立即验活，成功后显示账号类型（free / pro / elite 等）。
+### AGY 授权（上方「🔑 AGY OAuth 授权」卡片）
+
+1. 点「① 发起授权」，卡片里会就地出现一条 Google 授权链接（域名是 `accounts.google.com`）。
+2. 在新标签页打开它，用你的 Google 账号完成授权。
+3. 把浏览器地址栏里回调后的**完整链接**复制回来，粘进「③ 提交回调」并提交。
+4. 网关会自动认领并转换凭证、立即验活，成功后显示账号类型（free / pro / elite 等）。
+
+### Freebuff 授权（下方「🆓 Freebuff OAuth 授权」卡片）
+
+Freebuff **不需要粘贴任何链接**：
+
+1. 点「① 发起授权」，卡片里会就地出现一条登录链接（**域名是 `freebuff.com`，不是 Google 的 `accounts.google.com`**）。
+2. 在**普通窗口**打开它（**不需要无痕**），用 **Apple / Google / GitHub** 登录并完成授权；没有账号时会**新建一个 Freebuff 账号**。
+3. 回到门户点「③ 确认授权完成」认领凭证。链接 **1 小时内有效**，过期就重新点「① 发起授权」。
+
+> **怎么确认自己点对了卡片**：AGY 卡的链接一定是 `accounts.google.com`，Freebuff 卡的链接一定是 `freebuff.com`。如果 Freebuff 卡上出现的是 Google 链接，那这次授权没发对，别用它登录，重新点「① 发起授权」即可。
+
+两套流程各用各的按钮；提交后结果都在**当前页面就地显示，页面不会刷新或跳转**。
+
+授权成功后凭证会自动认领，**不需要你手动上传**：AGY 凭证进「AGY 凭证」区域，Freebuff 凭证进**同一张 Freebuff 卡片内的「Freebuff 凭证」页签**。
 
 OAuth 授权的好处：
 
 - 不用手工导出 JSON，格式兼容有保障。
-- 上传即验活，避免 `missing project_id` / `missing refresh_token` 等问题。
+- 授权即验活，避免 `missing project_id` / `missing refresh_token` 等问题。
 
 ## 手工上传凭证
 
