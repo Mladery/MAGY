@@ -26,6 +26,8 @@ Base URL 填 `https://aclimladery.dpdns.org/v1` 之后：
 | 文本 / 对话 | `POST /v1/chat/completions` | **酒馆（SillyTavern）和通用 AI 客户端只要填了 Base URL 就会自动补上** `/chat/completions`，不用手写 |
 | 生图 | `POST /v1/images/generations` | 图片生成接口，参数按 OpenAI 兼容格式 |
 
+> **生图是限时开放的**（模型 `Qwen-Image-2.1`，默认关闭、由站主按「推车」模式开启），且**不占用每日对话额度**；没开的时候调用会返回 429。规则见 [Qwen 生图](/wiki/qwen-image.md)。
+
 ```text
 Base URL: https://aclimladery.dpdns.org/v1
 对话端点: /chat/completions      （客户端自动补全）

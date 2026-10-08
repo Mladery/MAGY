@@ -11,6 +11,7 @@
 | 🚀 快速开始 | 登录、领取 API Key、CLI 接入 | [getting-started.md](/wiki/getting-started.md) |
 | 🔑 凭证 | AGY / Freebuff 两种 OAuth 授权、凭证上传、GCLI 区别 | [credentials.md](/wiki/credentials.md) |
 | 🧠 模型与配额 | 可用模型、配额规则、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
+| 🎨 Qwen 生图 | 限时开放、「推车」进度、未转正也能领临时授权 | [qwen-image.md](/wiki/qwen-image.md) |
 | 🎲 恶魔轮盘赌 | 玩法、道具、0 配额局、注册码掉落 | [roulette.md](/wiki/roulette.md) |
 | 🎫 注册码 | 获取渠道、使用位置、常见错误 | [regcodes.md](/wiki/regcodes.md) |
 | 🧹 账号保留与清退 | 每周五 23:00 清退从未调用过模型的账号 | [retention.md](/wiki/retention.md) |
@@ -65,6 +66,17 @@
 注册不满 7 天会自动缓冲；只领注册码、只登录门户、请求全部失败，都不算"用过"。
 
 门户账号区块会直接显示你的留存状态。详见 [账号保留与清退](/wiki/retention.md)。
+
+### Q7：Qwen 生图为啥调不通 / 说「当前未开放」？ {#q7}
+
+那不是你的 Key 有问题，也不是被限流——**生图模型是限时开放的**，由站主按「推车」模式手动开启：大家每成功出一张图就把进度往前推一点，推过 **33% / 66% / 100%** 检查点就延长开放时间，时间耗尽自动关闭并重置。
+
+- 想看现在开没开：门户页**第一栏**的「Qwen模型调用贡献进度」进度条和倒计时。
+- 调用未开放时会返回 **429**，`error_code` 是 `model_gate_closed`，并把当前进度一起告诉你。
+- **生图不占用你每天的对话额度**，与三族配额完全独立。
+- **还没转正也能用**：推车开放期间可在推车卡片里点「🔑 领取临时授权」，拿一把只能生图的临时 Key，本轮结束统一销毁。
+
+详见 [Qwen 生图](/wiki/qwen-image.md)。
 
 ## 提问前请准备好
 
