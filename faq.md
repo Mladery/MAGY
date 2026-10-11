@@ -11,8 +11,9 @@
 | 🚀 快速开始 | 登录、领取 API Key、CLI 接入 | [getting-started.md](/wiki/getting-started.md) |
 | 🔑 凭证 | AGY / Freebuff 两种 OAuth 授权、凭证上传、GCLI 区别 | [credentials.md](/wiki/credentials.md) |
 | 🧠 模型与配额 | 可用模型、配额规则、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
+| 🌊 海钞与兑换中心 | 游戏货币海钞、牌价、每日兑换上限 | [sea-cash.md](/wiki/sea-cash.md) |
 | 🎨 Qwen 生图 | 限时开放、「推车」进度、未转正也能领临时授权 | [qwen-image.md](/wiki/qwen-image.md) |
-| 🎲 恶魔轮盘赌 | 玩法、道具、0 配额局、注册码掉落 | [roulette.md](/wiki/roulette.md) |
+| 🎲 恶魔轮盘赌 | 玩法、海钞对局、免费练习局、注册码掉落 | [roulette.md](/wiki/roulette.md) |
 | 🎫 注册码 | 获取渠道、使用位置、常见错误 | [regcodes.md](/wiki/regcodes.md) |
 | 🧹 账号保留与清退 | 每周五 23:00 清退从未调用过模型的账号 | [retention.md](/wiki/retention.md) |
 | ⚠️ 报错速查 | 400 / 403 / 502 / missing project_id 等 | [errors.md](/wiki/errors.md) |
