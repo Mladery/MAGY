@@ -9,14 +9,14 @@
 | 主题 | 说明 | 文档 |
 | --- | --- | --- |
 | 🚀 快速开始 | 登录、领取 API Key、CLI 接入 | [getting-started.md](/wiki/getting-started.md) |
-| 🔑 凭证 | AGY / Freebuff 两种 OAuth 授权、凭证上传、GCLI 区别 | [credentials.md](/wiki/credentials.md) |
-| 🧠 模型与配额 | 可用模型、配额规则、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
+| 🔑 凭证 | AGY OAuth、AI Studio 登录态、凭证上传 | [credentials.md](/wiki/credentials.md) |
+| 🧠 模型与配额 | 可用模型、配额规则、gemini-4 准入、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
 | 🌊 海钞与兑换中心 | 游戏货币海钞、牌价、每日兑换上限 | [sea-cash.md](/wiki/sea-cash.md) |
-| 🎨 Qwen 生图 | 限时开放、「推车」进度、未转正也能领临时授权 | [qwen-image.md](/wiki/qwen-image.md) |
-| 🎲 恶魔轮盘赌 | 玩法、海钞对局、免费练习局、注册码掉落 | [roulette.md](/wiki/roulette.md) |
-| 🎫 注册码 | 获取渠道、使用位置、常见错误 | [regcodes.md](/wiki/regcodes.md) |
+| 🎨 Qwen 生图 | 限时开放、「推车」进度、临时授权 | [qwen-image.md](/wiki/qwen-image.md) |
+| 🎲 恶魔轮盘赌 | 玩法、海钞对局、免费练习局 | [roulette.md](/wiki/roulette.md) |
+| 🎫 注册码（已关闭） | 现为直接注册，注册码已不需要 | [regcodes.md](/wiki/regcodes.md) |
 | 🧹 账号保留与清退 | 每周五 23:00 清退从未调用过模型的账号 | [retention.md](/wiki/retention.md) |
-| ⚠️ 报错速查 | 400 / 403 / 502 / missing project_id 等 | [errors.md](/wiki/errors.md) |
+| ⚠️ 报错速查 | 400 / 401 / 403 / 429 / 502 等 | [errors.md](/wiki/errors.md) |
 |  风控与安全 | 限流、防贩子、封禁规则 | [risk-control.md](/wiki/risk-control.md) |
 | 📢 更新日志 | 近期功能与规则调整 | [updates.md](/wiki/updates.md) |
 
@@ -36,39 +36,70 @@
 
 ### Q3：凭证上传失败怎么回事？ {#q3}
 
-1. **不要把 GCLI 凭证上传给 AGY 公益站，AGY 公益站不收！**
-2. GG 公益站里的"下载凭证"全部都是 GCLI。
-3. 请优先使用 OAuth 授权：**要 AGY 凭证就用「🔑 AGY OAuth 授权」卡片，要 Freebuff 凭证就用「🆓 Freebuff OAuth 授权」卡片**。两张卡相邻、各自独立：AGY 卡的链接是 `accounts.google.com`、需要粘贴回调；Freebuff 卡的链接是 `freebuff.com`、**不需要粘贴任何内容**。
+先分清你要传哪一种 —— 本站有**两套完全不同的凭证**：
+
+| 你要的 | 该走哪张卡 | 链接域名 |
+| --- | --- | --- |
+| 进共享池、换每日额度 | 「🔑 AGY OAuth 授权」 | `accounts.google.com` |
+| 只给自己用、不限额（`pg-` 模型） | 「🧪 AI Studio 反代 → 绑定凭证」 | 不用链接，传 cookie JSON |
+
+1. **不要把 GCLI 凭证上传给本站，本站不收！** 其他公益站的「下载凭证」全部是 GCLI。
+2. AGY 优先用 OAuth，不要手工拼 JSON。
+3. AI Studio 那份要在**电脑上的 Chrome / Edge** 用 Cookie-Editor 导出 **JSON**（不是 Header String），手机、平板、微信内置浏览器都不行。
+4. `__Secure-1PSIDRTS` 冲突时按提示处置：**无痕登录 → 抓完立刻关窗 → 门户原地更新**。
 
 详见 [凭证文档](/wiki/credentials.md)。
 
 ### Q4：403 报错 "The caller does not have permission" 怎么办？ {#q4}
 
-轮询到的共享凭证本身已失效（账号被上游限制 / 项目无权限）。这类凭证被判定后会**自动永久移出轮换**，所以同一个坏凭证不会再反复出现。
+分三种情况，看模型名：
 
-**解决**：重新 roll 一次；如果同一条回复连续 403，请带图反馈。
+- **裸名 `gemini-4-*`** → 你的账号没有这一档权益（免费档只开 `hydrogen`），见 [Q6](#q6)。
+- **`pg-` / `bd-` / `ap-` 别名** → **你自己的** Google 账号没有这个模型的权限。同一个凭证 `hydrogen` 能过、`argon` 403 是正常的，不是本站拦你。
+- **共享池的普通模型** → 轮到的共享凭证本身失效了。这类凭证被判定后会**自动永久移出轮换**，不会反复出现。
 
-### Q5：注册码哪里有？又在哪里用？ {#q5}
+**解决**：重新 roll 一次；如果是自己的凭证，换 `hydrogen` 或升级账号。
 
-- DC 授权后若未注册，会提示输入注册码。
-- 获取渠道：站主不定期发放 + 恶魔轮盘赌 0 配额局随机掉落。
+### Q5：还要注册码吗？ {#q5}
 
-详见 [注册码文档](/wiki/regcodes.md)。
+**不需要了。** 注册码机制已于 2026-11-20 关闭，Discord 授权通过后直接可用。
 
-### Q6：我很久没用，账号会被清退吗？ {#q6}
+历史上拿到的注册码不用再管，也不必再等发码。
+
+### Q6：为什么 `gemini-4-*` 一律 403？ {#q6}
+
+因为这一代模型是**按 Google 账号发放**的，本站无法代你开通。
+
+- **四个代号**：`argon` / `neon` / `carbon` / `hydrogen`。
+- **免费档只能用 `hydrogen`**；其余三个需要付费档（Ultra 或已付费的 Pro）。
+- 实测同一账号、同一出口：`hydrogen` 连打 3 次全成功，`argon` / `neon` / `carbon` 连打 3 次全 403 —— 差别在账号权益，不在网络。
+- **例外**：你自己的 `pg-` / `bd-` / `ap-` 别名不受这条限制，能调什么由你的 Google 账号决定。
+
+详见 [gemini-4 的准入](/wiki/models-and-quota.md#gemini4)。
+
+### Q7：有没有不占每日额度的模型？ {#q7}
+
+有，两组：
+
+1. **免费层**：`big-pickle` 和所有 `*-free` 结尾的模型（如 `deepseek-v4.1-flash-free`），直接调，不扣次数。
+2. **自己的 AI Studio 登录态**：上传后拿 `pg-` / `bd-` / `ap-` 别名，花你自己 Google 账号的额度。
+
+注意每日额度本身只有 **5 次**（Gemini / Claude 各 5），想加额度只能贡献可用凭证。
+
+### Q8：我很久没用，账号会被清退吗？ {#q8}
 
 **每周五 23:00（北京时间）** 检查一次，按 **7 天一个周期**判定。每个周期内**满足任意一条**就能再留一个周期：
 
 - 用本站发给你的 Key **成功调用过模型**（本周期内，一次即可）；
 - **提供过可用凭证**（本周期内 OAuth 授权或上传、验活成功）。
 
-两条都不满足的账号会被清退 —— API Key 立即失效，名下上传的凭证文件一并删除。想回来需要**重新获取注册码**兑换后才能使用。
+两条都不满足的账号会被清退 —— API Key 立即失效，名下上传的凭证文件一并删除。想回来**重新用 Discord 登录**即可（注册码机制已于 2026-11-20 关闭），会拿到新 Key 并重新计算 7 天缓冲。
 
 注册不满 7 天会自动缓冲；只领注册码、只登录门户、请求全部失败，都不算"用过"。
 
 门户账号区块会直接显示你的留存状态。详见 [账号保留与清退](/wiki/retention.md)。
 
-### Q7：Qwen 生图为啥调不通 / 说「当前未开放」？ {#q7}
+### Q9：Qwen 生图为啥调不通 / 说「当前未开放」？ {#q9}
 
 那不是你的 Key 有问题，也不是被限流——**生图模型是限时开放的**，由站主按「推车」模式手动开启：大家每成功出一张图就把进度往前推一点，推过 **33% / 66% / 100%** 检查点就延长开放时间，时间耗尽自动关闭并重置。
 

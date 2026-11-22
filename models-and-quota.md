@@ -10,39 +10,82 @@
 | Claude | `/v1/messages`（Anthropic 兼容） | 可由 Gemini 网关映射 |
 | OpenAI | `/v1/responses` / `/v1/chat/completions` | 兼容层 |
 | Interactions | Gemini Interactions 协议 | 支持 CLI 交互调用 |
+| 免费层 | `/v1/chat/completions` | `big-pickle` 与 `*-free` 系列，**不计入每日额度** |
+| AI Studio 自备凭证 | `/v1/chat/completions` | `pg-` / `bd-` / `ap-` 前缀，**花你自己的 Google 额度** |
 
 具体模型名请以门户/管理面板当前列表为准（模型注册表会自动热更新）。
 
 ## 配额基础规则
 
 - 每个 Discord 账号有独立额度，按天统计。
-- 未转正的账号（只登录过、既没有可用凭证也没兑换过注册码）可下注额度为 0，门户里也不会显示今日配额用量；兑换注册码或提供有效凭证后才有额度。
+- **完成 Discord 授权即可用**，基础额度 5 次/天（注册码机制已于 2026-11-20 关闭，不再需要转正流程）。
 - 额度与凭证池轮询、共享池容量相关，繁忙时段可能拥堵。
 - 公共网关持续轮询大量凭证，配额面板可在 `/quota` 查看 5 小时配额看板。
 
 ## 家族配额独立计算
 
-三个家族的每日额度各自独立，用掉一个不会吃掉另一个：
+两个家族（外加两组不计额度的通道）各自独立，用掉一个不会吃掉另一个：
 
 | 家族 | 默认每日额度 | 贡献凭证加成 |
 | --- | --- | --- |
-| Gemini / 通用 | 33 | 免费凭证 +33 / Pro 凭证 +110 |
-| Claude | 15 | 免费凭证 +10 / Pro 凭证 +30 |
-| DeepSeek | **0（无基础额度）** | **Freebuff 凭证 +50 / 张**（只认 Freebuff，Antigravity 凭证不加） |
+| Gemini / 通用 | **5** | 免费凭证 +33 / Pro 凭证 +110 |
+| Claude | **5** | 免费凭证 +10 / Pro 凭证 +30 |
+| 免费层（`*-free` / `big-pickle`） | **不计入额度** | 不适用 |
+| AI Studio 自备凭证（`pg-` / `bd-` / `ap-`） | **不计入额度** | 不适用 |
 
-> 「Freebuff 凭证加成」只统计**活的 Freebuff 凭证**：禁用或验活失败的凭证不计；Antigravity（AGY）凭证虽然也属于免费档，但**不会**加到 DeepSeek 家族。
+> 基础额度是 **5**，不是「不限量」。想往上加只有一条路：**贡献可用凭证**（免费凭证 Gemini +33 / Claude +10，Pro 凭证 Gemini +110 / Claude +30）。凭证必须是**活的**才计：禁用或验活失败的不算。
 >
-> DeepSeek 一族的基础额度是 **0**，而且这里的 0 表示**真的没有额度**（不等于「不限量」）：**没有绑定过有效 Freebuff 凭证的账号，这一族可用的次数是 0**，额度完全靠 Freebuff 凭证累积。其他家族（Gemini / Claude）的「初始为 0 即不限量」规则不受影响。
->
-> 门户首页的「**今日配额用量**」也照这条规则显示：**DeepSeek 在当天没有额度时显示 `0 / 0`**（红色），**不会**写成「不限」；只有 Gemini / Claude 的 0 才读作不限量。
+> 门户首页的「**今日配额用量**」按这条规则显示。额度耗尽后再调用该家族会返回 429（`account daily call limit reached`），换另一个家族或第二天再试。
 
-## DeepSeek（V4.1 Flash）
+## 不计额度的两组通道
 
-- 对外模型名：`deepseek/deepseek-v4.1-flash`（即本站所说的 V4.1 Flash）。
-- 目前 DeepSeek 家族**只开放这一档模型**，其余上游模型暂不对外。
-- **没有基础额度**（基础 0）：这一族的 0 表示**真的没有额度**，没绑定 Freebuff 凭证的账号调用该族会被直接拒（429，提示该族当日没有额度）。
-- **每张「活的 Freebuff 凭证」+50 次/天**（例如 1 张 = 50，2 张 = 100）。加成**按凭证张数**叠加，只认 **Freebuff** 凭证：Antigravity 凭证属于免费档，但**不计入**这一族；禁用或验活失败的凭证同样不计。
-- 该家族的并发单独限流（默认 3 路），与其他家族分开计数，不占用全局并发额度。
+这两组**完全不消耗**上面那两个家族每日次数，额度耗尽也照常可用：
+
+1. **免费层**：模型名带 `-free` 后缀的，以及 `big-pickle`。这些走上游免费额度，本站只做转发。上游繁忙时可能失败或排队，属于正常现象。
+2. **AI Studio 自备凭证**：模型名以 `pg-` / `bd-` / `ap-` 开头，后面跟你的凭证号。见下一节。
+
+## AI Studio 自备凭证（`pg-` / `bd-` / `ap-`）
+
+在门户「🧪 AI Studio 反代」里上传一次 Google 登录态，就能用**自己的账号**跑模型：
+
+- **三通道**：`pg-` = Playground 额度，`bd-` = Build 额度，`ap-` = Gemini 网页端额度。三条各花各的，互不影响。
+- **模型名形如** `pg-03a37edeae-gemini-3.8-flash`：`pg` 是通道、中间那串是你的凭证号、后面是模型名。这个凭证号对应你上传的那份登录态，**换登录态时凭证号不变**，所以配置里的模型名不用改。
+- **按人隔离**：`pg-` 模型只有你自己看得见、调得动，别人即使知道名字也会被拒（`model_not_owned`）。
+- **不占本站额度**：花的是你自己 Google 账号的额度，本站的每日 429 不会落到这上面。
+- **每人最多 5 份**，登录态失效可原地更新。
+- **能调哪些模型，取决于你的 Google 账号**：同一个 `pg-` 前缀下，不同账号看到的模型数不一样，付费档（见下一节）尤其如此。目录里有、你的号没权限时，调用会返回 403 `The caller does not have permission` —— 这是上游按账号发放的权限，不是本站拦你。
+
+## gemini-4 的准入（重要） {#gemini4}
+
+`gemini-4` 这一代是**按账号发放**的，本站无法代你开通。规则如下：
+
+- **四个代号**：`argon` / `neon` / `carbon` / `hydrogen`。带 `-high` / `-xhigh` 后缀的是同一模型的不同思考档位。
+- **免费档只能用 `hydrogen`**；`argon` / `neon` / `carbon` 需要**付费档**（Ultra 或已付费的 Pro 订阅）。实测同一账号、同一出口，`hydrogen` 连续 3 次全部成功，`argon` / `neon` / `carbon` 连续 3 次全部 403 `The caller does not have permission` —— 差别在账号权益，不在网络。
+- **裸名 `gemini-4-*` 只有打上 `pro-paid` / `free-beta` 标签的账号才能调**，否则 403 `gemini4_credential_required`。标签由系统读你凭证的上游目录自动判定，不看你填了什么套餐。
+- **`pg-` / `bd-` / `ap-` 别名不受这条限制**：它们走你自己的额度，你的号有没有权限由 Google 决定。
+- **同档位内部也是分裂的**：官方文案写的是「Ultra **和**已付费的 Pro」，所以不能按「我是 Pro 就一定能用」推断，只能实测。
+
+## DeepSeek
+
+- **原「DeepSeek 家族 + Freebuff 凭证加成」已下线**（Freebuff 通道 2026-11-20 退役）。
+- 现在能用的 DeepSeek 相关模型是**免费层**的 `deepseek-v4.1-flash-free`，**不占每日额度**，上游繁忙时可能失败。
+- 原来的 `deepseek/deepseek-v4.1-flash` 已不再提供，客户端里如果还写着这个模型名会报模型不存在。
+
+## 当前模型清单（27 个公共模型）
+
+具体以 `/v1/models` 返回为准，下面是当前全貌：
+
+| 类别 | 模型 |
+| --- | --- |
+| Gemini 3.x | `gemini-3-flash`、`gemini-3.1-flash-lite`、`gemini-3.5-flash-lite`、`gemini-3.8-flash-high`、`gemini-3.8-flash-tiered` |
+| Gemini 4 | `gemini-4-argon-high`、`gemini-4-carbon-high`、`gemini-4-neon-xhigh`、`gemini-4-hydrogen-xhigh` |
+| Claude | `claude-sonnet-4-6`、`claude-opus-4-6-thinking`、`claude-sonnet-5-5-high`、`claude-opus-5-5-high` |
+| 生图 | `gemini-3.1-flash-image`、`qwen-image-2.1` |
+| 其他 | `gpt-oss-120b-medium` |
+| 免费层 | `big-pickle`、`deepseek-v4.1-flash-free`、`longcat-2.5-free`、`iceman-free`、`beam-free`、`flint-40b-free`、`nemotron-3.5-super-vl-free`、`nemotron-3.5-lightning-free`、`hy4-flash-free`、`tidepool-alpha-free`、`mimo-v2.6-flash-free` |
+
+> 另有一批 `pg-` / `bd-` / `ap-` 开头的自备凭证别名，只对你自己的 Key 可见，不在这张公共清单里。
+
 
 ## Qwen 生图（限时开放）
 
@@ -50,10 +93,10 @@
 
 - **端点**：`POST /v1/images/generations`（OpenAI 兼容格式）。
 - **模型名**：`Qwen-Image-2.1`（也接受 `Qwen/Qwen-Image-2.1`）。
-- **不占用每日对话额度**：与上表三族的额度完全独立，生图多少次都不会减少你的对话次数。
+- **不占用每日对话额度**：与上表两个家族的额度完全独立，生图多少次都不会减少你的对话次数。
 - **限时开放**：模型**默认关闭**，由站主按「推车」模式开启——每次成功出图给全体推进度，推过 **33% / 66% / 100%** 检查点就延长开放时间，时间耗尽自动关闭并重置。
 - **只有成功出图才计数**；车没开时调用返回 **429**（`error_code` 为 `model_gate_closed`），并附带当前进度，这不是你的 Key 有问题。
-- **未转正的账号也能试用**：推车开放期间可在门户页领取**只能生图**的临时 Key，本轮结束统一销毁。
+- **没有可用 Key 也能试用**：推车开放期间可在门户页领取**只能生图**的临时 Key，本轮结束统一销毁。
 
 完整玩法、临时授权与常见问题见 [Qwen 生图](/wiki/qwen-image.md)。
 
@@ -70,9 +113,19 @@
 
 ## 常见模型相关报错
 
-- `User location is not supported for the API use.` → 节点地区问题，重 roll。
-- `Requests ending with a model turn are not supported.` → 对话结尾是 assistant，发 continue。
-- `gemini-3.1-flash-image` 调用报错 → URL 后缀改为 `/v1/images/generations`。
+| 报错 | 含义 | 怎么办 |
+| --- | --- | --- |
+| `User location is not supported for the API use.` | 轮到的节点地区不受支持 | 重 roll |
+| `Requests ending with a model turn are not supported.` | 最后一条是 assistant | 发 `continue` 或空格 |
+| `gemini-3.1-flash-image` 报错 | 端点用错 | 改走 `/v1/images/generations` |
+| 403 `gemini4_credential_required` | 你的账号没有 gemini-4 标签 | 只能用 `hydrogen`，或走自己的 `pg-` 别名 |
+| 403 `The caller does not have permission` | 账号本身没有这个模型的权限（常见于付费档） | 不是故障；换 `hydrogen` 或用自己的凭证 |
+| 403 `model_not_owned` | `pg-` 别名的凭证号不是你的 | 从 `/v1/models` 复制自己那条，别手写 |
+| 403 `model_not_allowed` | 这把 Key 被限定在白名单内 | 用白名单里的模型，或换主 Key |
+| 401 `未找到凭证 cred_xxx` | 别名指向的凭证已被删除 | 刷新 `/v1/models` 拿新的别名 |
+| 429 `account daily call limit reached` | 该家族当日额度用完 | 换家族 / 等次日 / 调免费层模型 |
+| 429 `model_gate_closed` | 生图「推车」当前没开 | 看门户第一栏的进度与倒计时 |
+
 
 ## 提示词缓存（为什么续写更省）
 
