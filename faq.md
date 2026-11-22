@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | 🚀 快速开始 | 登录、领取 API Key、CLI 接入 | [getting-started.md](/wiki/getting-started.md) |
 | 🔑 凭证 | AGY OAuth、AI Studio 登录态、凭证上传 | [credentials.md](/wiki/credentials.md) |
-| 🧠 模型与配额 | 可用模型、配额规则、gemini-4 准入、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
+| 🧠 模型与配额 | 可用模型、配额规则、路由规则、gemini-4 准入、Opus 特殊配额 | [models-and-quota.md](/wiki/models-and-quota.md) |
 | 🌊 海钞与兑换中心 | 游戏货币海钞、牌价、每日兑换上限 | [sea-cash.md](/wiki/sea-cash.md) |
 | 🎨 Qwen 生图 | 限时开放、「推车」进度、临时授权 | [qwen-image.md](/wiki/qwen-image.md) |
 | 🎲 恶魔轮盘赌 | 玩法、海钞对局、免费练习局 | [roulette.md](/wiki/roulette.md) |
@@ -109,6 +109,16 @@
 - **还没转正也能用**：推车开放期间可在推车卡片里点「🔑 领取临时授权」，拿一把只能生图的临时 Key，本轮结束统一销毁。
 
 详见 [Qwen 生图](/wiki/qwen-image.md)。
+
+### Q10：报 `model_quota_unavailable`，是被封了吗？ {#q10}
+
+不是。这是一条 **400**，意思是「共享池里这个家族（Gemini 或 Claude）的凭证，5 小时窗口都只剩不到 10% 了」。网关在发请求前就拒了，**不消耗你的每日次数**，也不会让你干等。
+
+- 文案里带 `until`：那是**最早**一批凭证恢复的时间。
+- 想马上用：换另一个家族、换免费层（`*-free` / `big-pickle`）、或用自己的 `pg-` 别名 —— 这三条都不看共享池的额度。
+- 和你自己的每日额度是两回事：那是 429 `account daily call limit reached`。
+
+详见 [网关怎么挑凭证](/wiki/models-and-quota.md#routing)。
 
 ## 提问前请准备好
 
