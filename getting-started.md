@@ -5,13 +5,15 @@
 ## 1. 用 Discord 登录
 
 - 打开 [MAGY 公益站](https://aclimladery.dpdns.org/) 首页，点击「使用 Discord 登录」。
-- 只有指定 Discord 服务器（Guild）成员才能登录，可选校验身份组 Role。
+- 必须**同时**满足两条：是类脑社区（Discord 服务器）成员，且持有准入身份组 `1335363403870502912`。只有入群、没有身份组会被挡下。
+- 授权页会请求「查看你的服务器成员信息」权限，用来读取**你自己**的角色，只读。
 
 ## 2. 领取你的 API Key
 
 登录后进入 `/portal` 控制台：
 
 - 每个 Discord 账号有**专属 API Key**（`sk-...`），首次访问自动生成，后续登录保持不变。
+- **2026-11-24 起**：全站旧 Key 已整体吊销，必须重新登录一次领取新 Key；账号记录与留存宽限期不受影响。
 - 点击眼睛图标显示 / 隐藏 Key，点击「复制」复制完整 Key。
 - **API 地址（Base URL）：`https://aclimladery.dpdns.org/v1`**
 - **备用地址：`https://api.aclimfast.dpdns.org/v1`**（与主入口完全等价，同一个源站、同一套 Key）
